@@ -42,7 +42,7 @@ app.layout = html.Div([
     
     html.Div([
         dcc.Graph(id='demo-graph', figure={})
-    ])
+    ]),
 
 ], className = 'main-container')
 
@@ -69,7 +69,7 @@ def demo_graph(value):
                  y='Business per Year',
                  color='Business per Year',
                  )
-    
+
     return fig
 
 
