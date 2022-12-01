@@ -1,21 +1,15 @@
-from dash import Dash, dcc, html, Input, Output
+from dash import Dash, dcc, html, Input, Output, State
 import pandas as pd 
 import plotly.express as px
 import plotly.graph_objects as go
 from sqlalchemy import create_engine
-  
+
+
 # SQLAlchemy connectable
-engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/yelp_project')
+engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
 
-# external JavaScript files
-external_scripts = ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js']
 
-# external CSS stylesheets
-external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css']
-
-app = Dash(__name__,
-                external_scripts=external_scripts,
-                external_stylesheets=external_stylesheets)
+app = Dash(__name__)
 
 
 app.title = 'YELP'
@@ -23,54 +17,58 @@ server = app.server
 
 
 
-
-# cuerpo de la aplicacion
-# para agregar espacios usar la clase html y un metodo P, Div, Img, e.g. html.Div()
-
 app.layout = html.Div([
-
-    # no modificar este radioItem
-    # si se necesita usar una grafica que no tenga interaccion,
-    # grafica estatica, se puede usar como input este value
+    
     html.Div(dcc.RadioItems(id='aux', value='', className='aux')),
     
-    # -------------
-    
-    # se puede empezar a maquetar desde aqui
-    
-    html.H2('Titulo de mi Grafica'),
     
     html.Div([
-        dcc.Graph(id='demo-graph', figure={})
-    ]),
-
+        
+        html.Div([
+            
+            dcc.Textarea(id='textarea2', className='user', placeholder='enter id user'),
+            
+            html.Button('login', id='textarea-state-example-button', n_clicks=0, className='login'),
+            
+        ], className='login-area'),
+        
+        html.Div(id='day', className='day')
+        
+    ], className='row1-1'),
+        
+    html.Div([
+        html.Div('Welcome',id='textarea-state-example-output', className=''),
+    ], className='row1-2')
+       
+    
 ], className = 'main-container')
 
 
 
-# funcionalidad de la aplicacion
-# aqui se definen las graficas que iran en los espacios de html
-# tambien la interaccion que tendran las mismas con alguna otra grafica
-# o con algun boton, dropdown, input de texto o selector
-
+# funcion para validar el id_user
 @app.callback(
-    Output('demo-graph', 'figure'),
+    Output('textarea-state-example-output', 'children'),
+    Input('textarea-state-example-button', 'n_clicks'),
+    State('textarea2', 'value')
+)
+def update_output(n_clicks, value):
+    if n_clicks > 0 and value != None:
+        return f'Welcome, {value}'
+    else:
+        return 'Welcome'
+
+
+
+# funcion para retornar el dia y la hora para la ciudad de argentina
+@app.callback(
+    Output('day', 'children'),
     [Input('aux', 'value')]
 )
-def demo_graph(value):
-    
-    query = 'select count(id_business), year from reviews group by year order by year desc;'
-    query_result = engine.connect().execute(query).fetchall()
-    df = pd.DataFrame(query_result)
-    df.columns = ['Business per Year', 'Year']
-    
-    fig = px.bar(df, 
-                 x='Year',
-                 y='Business per Year',
-                 color='Business per Year',
-                 )
-
-    return fig
+def actual_day(value):
+    from datetime import datetime
+    import pytz
+    dt = datetime.now(pytz.timezone('America/Buenos_Aires'))
+    return '{}, {}'.format(dt.strftime('%A'),dt.strftime("%H:%M"))
 
 
 
