@@ -59,7 +59,7 @@ app.layout = html.Div([
         
         html.Div([
             html.Div([
-                dcc.Input(id='enter-id', className='enter-id', placeholder='enter id user'),
+                dcc.Input(id='enter-id', className='enter-id', placeholder='enter user id'),
                 html.Button('recommend me', id='login', n_clicks=0, className='login'),
             ], className='login-container'),
             
@@ -142,8 +142,12 @@ def card(n_clicks, value):
                         html.P(recomendacion2.iloc[i, :]['Sunday'])
                     ], className='atention-hours')
                 ], className='atention'),
-                html.P(recomendacion2.iloc[i,:]['address'], className='address'),
-                html.P(recomendacion2.iloc[i,:]['city']+', '+recomendacion2.iloc[i,:]['state'], className='city-state'),
+                html.Div([
+                    html.P(recomendacion2.iloc[i, :]['address'], className='address'),
+                    html.P(recomendacion2.iloc[i, :]['city']+', ' + recomendacion2.iloc[i, :]['state'], className='city-state'),
+                    # html.Button('ver mapa', id='map', n_clicks=0,className='button-map'),
+                    html.Button(f'Button {i}', id=f'btn-nclicks-{i}', n_clicks=0),
+                ], className='direccion'),
                 html.Div([
                     html.Div([
                         
@@ -228,7 +232,10 @@ def card(n_clicks, value):
                 html.Div([
                     html.P(recomendacion1.iloc[i,:]['address'], className='address'),
                     html.P(recomendacion1.iloc[i,:]['city']+', '+recomendacion1.iloc[i,:]['state'], className='city-state'),
-                    html.Button('ver mapa', id='map', n_clicks=0, className='button-map'),
+                    # html.Button('ver mapa', id='map', n_clicks=0, className='button-map'),
+                    html.Button(f'Button {i}', id=f'btn-nclicks-{i}', n_clicks=0),
+
+
                 ], className='direccion'),
                 html.Div([
                     html.Div([
