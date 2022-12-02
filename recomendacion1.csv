@@ -1,0 +1,10 @@
+name,address,latitude,longitude,city,state,stars,review_count,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday,estrellas
+Bud & Marilyn's,1234 Locust St,39.9478,-75.1623,Philadelphia,PA,4.0,1303,7:0-14:0,7:0-14:0,7:0-14:0,7:0-14:0,7:0-14:0,10:0-14:0,0,AAAAC
+Dim Sum House,"3939 Chestnut St, Fl 2",39.9558,-75.2017,Philadelphia,PA,4.0,451,9:0-19:0,9:0-19:0,9:0-19:0,9:0-19:0,9:0-19:0,9:0-18:0,11:0-17:0,AAAAC
+Wine Cask,813 Anacapa St,34.4211,-119.699,Santa Barbara,CA,4.0,322,0:0-0:0,15:0-21:0,15:0-21:0,15:0-21:0,15:0-21:0,16:0-21:0,16:0-21:0,AAAAC
+Nachomamas Tex-Mex,9643 Manchester Rd,38.6088,-90.3685,Saint Louis,MO,3.0,301,9:0-19:30,9:0-19:30,9:0-19:30,9:0-19:30,9:0-19:30,8:30-14:0,0,AAACC
+Crossing Vineyards & Winery,1853 Wrightstown Rd,40.2858,-74.8889,Newtown,PA,3.5,170,10:30-21:30,10:30-21:30,10:30-21:30,10:30-21:30,10:30-21:30,10:30-21:30,11:0-21:0,AAABC
+St Vincent's Guest House,1507 Magazine St,29.9341,-90.0729,New Orleans,LA,2.5,104,10:0-16:0,10:0-16:0,10:0-16:0,10:0-16:0,10:0-16:0,10:0-16:0,0,AABCC
+Aura Ultra Lounge,407 N Virginia St,39.5309,-119.815,Reno,NV,3.0,67,5:0-0:0,5:0-0:0,5:0-0:0,5:0-0:0,5:0-1:0,5:0-1:0,5:0-0:0,AAACC
+Amy's Day Spa,2001 W Kennedy Blvd,27.945,-82.48,Tampa,FL,4.0,63,5:30-19:30,5:30-19:30,5:30-19:30,5:30-19:30,5:30-19:30,7:0-12:0,7:0-12:0,AAAAC
+San Giorgi's Coffee,"6435 N Thornydale Rd, Ste 169",32.325,-111.047,Tucson,AZ,4.5,56,16:0-22:0,16:0-22:0,16:0-22:0,16:0-22:0,13:0-1:0,12:0-1:0,13:0-22:0,AAAAB
