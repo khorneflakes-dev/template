@@ -17,7 +17,7 @@ server = app.server
 
 app.layout = html.Div([
     html.Div(dcc.RadioItems(id='aux', value='', className='aux')),
-        html.Div(id='demo'),
+
     html.Div([
         
         html.Div([
@@ -63,14 +63,14 @@ app.layout = html.Div([
                 html.Button('recommend me', id='login', n_clicks=0, className='login'),
             ], className='login-container'),
             
-            html.Div([
-                html.Iframe(id='iframe-map',src='https://www.google.com/maps/embed/v1/place?key=AIzaSyBKqlE-X4gVVz0YNXpsJcMuaFEfqhkHIio&q=36.151387,-86.796603',
-                            style={'width':"1500", 'height':"1080", 'style':"border:0", 'loading':"lazy", 'referrerpolicy':"no-referrer-when-downgrade"}, className='iframe')   
-            ], className='map'),
+            html.Div(id='iframe'
+                # html.Iframe(id='iframe-map',src='https://www.google.com/maps/embed/v1/place?key=AIzaSyBKqlE-X4gVVz0YNXpsJcMuaFEfqhkHIio&q=36.151387,-86.796603',
+                #             style={'width':"1500", 'height':"1080", 'style':"border:0", 'loading':"lazy", 'referrerpolicy':"no-referrer-when-downgrade"}, className='iframe')   
+            , className='map'),
         ],className='col2'),
         
     ], className='users-container'),  
-    
+    html.Div(id='demo'),    
 
 ], className = 'main-container')
 
@@ -97,6 +97,8 @@ def update_output(n_clicks, value):
     State('enter-id', 'value')    
 )
 def card(n_clicks, value):
+    global recomendacion
+    
     
     def hour_format(value):
         from datetime import datetime
@@ -112,7 +114,7 @@ def card(n_clicks, value):
         
     engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
     if n_clicks == 0 and value == None:
-        global recomendacion
+        # global recomendacion
         recomendacion = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
                                     con=engine)
         
@@ -201,7 +203,7 @@ def card(n_clicks, value):
 
         tupla_consulta = tuple(recomendacion.keys()[:30])
         
-        global recomendacion
+        # global recomendacion
         recomendacion = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
                                     con=engine)
         
@@ -277,20 +279,53 @@ def card(n_clicks, value):
 
 
 @app.callback(
-    Output('demo', 'children'),
+    Output('iframe', 'children'),
     Input('btn-nclicks-0', 'n_clicks'),
     Input('btn-nclicks-1', 'n_clicks'),
+    Input('btn-nclicks-2', 'n_clicks'),
+    Input('btn-nclicks-3', 'n_clicks'),
+    Input('btn-nclicks-4', 'n_clicks'),
+    Input('btn-nclicks-5', 'n_clicks'),
+    Input('btn-nclicks-6', 'n_clicks'),
+    Input('btn-nclicks-7', 'n_clicks'),
+    Input('btn-nclicks-8', 'n_clicks'),
 )
-def displayBack(btn1, btn2):
+def displayBack(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9):
     
-    msg = 'estado inicial'
+    latitude = ''
+    longitude = ''
+    
     if "btn-nclicks-0" == ctx.triggered_id:
-        return recomendacion.columns
+        latitude = recomendacion['latitude'][0]
+        longitude = recomendacion['longitude'][0]
     elif "btn-nclicks-1" == ctx.triggered_id:
-        return 'boton 2 presionado'
-    else:
-        return msg
+        latitude = recomendacion['latitude'][1]
+        longitude = recomendacion['longitude'][1]
+    elif "btn-nclicks-2" == ctx.triggered_id:
+        latitude = recomendacion['latitude'][2]
+        longitude = recomendacion['longitude'][2]
+    elif "btn-nclicks-3" == ctx.triggered_id:
+        latitude = recomendacion['latitude'][3]
+        longitude = recomendacion['longitude'][3]
+    elif "btn-nclicks-4" == ctx.triggered_id:
+        latitude = recomendacion['latitude'][4]
+        longitude = recomendacion['longitude'][4]
+    elif "btn-nclicks-5" == ctx.triggered_id:
+        latitude = recomendacion['latitude'][5]
+        longitude = recomendacion['longitude'][5]
+    elif "btn-nclicks-6" == ctx.triggered_id:
+        latitude = recomendacion['latitude'][6]
+        longitude = recomendacion['longitude'][6]
+    elif "btn-nclicks-7" == ctx.triggered_id:
+        latitude = recomendacion['latitude'][7]
+        longitude = recomendacion['longitude'][7]
+    elif "btn-nclicks-8" == ctx.triggered_id:
+        latitude = recomendacion['latitude'][8]
+        longitude = recomendacion['longitude'][8]
 
+    iframe = html.Iframe(id='iframe-map',src=f'https://www.google.com/maps/embed/v1/place?key=AIzaSyBKqlE-X4gVVz0YNXpsJcMuaFEfqhkHIio&q={latitude},{longitude}',
+                            style={'width':"1500", 'height':"1080", 'style':"border:0", 'loading':"lazy", 'referrerpolicy':"no-referrer-when-downgrade"}, className='iframe')
+    return iframe
 
 if __name__ == '__main__':
     app.run_server(debug=True)
