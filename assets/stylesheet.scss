@@ -11,7 +11,7 @@ $color-texto2: rgba(0, 0, 0, 0.69);
 }
 
 :root{
-    font-size: 16px;
+    font-size: 15px;
 }
 .aux{
     display: none;
@@ -33,6 +33,7 @@ $color-texto2: rgba(0, 0, 0, 0.69);
         margin-left: 1.5vw;
         margin-right: 1.5vw;
         margin-bottom: 4vh;
+        margin-top: 4vh;
         min-height: 100vh;
         .col1{
             width: 60%;
@@ -174,6 +175,7 @@ $color-texto2: rgba(0, 0, 0, 0.69);
                     color: $color-fondo;
                     font-weight: 900;
                     font-size: 1.5rem;
+                    cursor: pointer;
                 }
                 
             }

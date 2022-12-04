@@ -1,4 +1,4 @@
-from dash import Dash, dcc, html, Input, Output, State
+from dash import Dash, dcc, html, Input, Output, State, ctx
 import pandas as pd 
 import plotly.express as px
 import plotly.graph_objects as go
@@ -17,7 +17,7 @@ server = app.server
 
 app.layout = html.Div([
     html.Div(dcc.RadioItems(id='aux', value='', className='aux')),
-    
+        html.Div(id='demo'),
     html.Div([
         
         html.Div([
@@ -71,7 +71,7 @@ app.layout = html.Div([
         
     ], className='users-container'),  
     
-    html.Div(id='demo')
+
 ], className = 'main-container')
 
 
@@ -97,11 +97,27 @@ def update_output(n_clicks, value):
     State('enter-id', 'value')    
 )
 def card(n_clicks, value):
+    
+    def hour_format(value):
+        from datetime import datetime
+        from time import strptime
+        if value == '0':
+            return '00:00-00:00'
+        else:
+            horas = value.split('-')
+            hora1 = datetime.strptime(horas[0], '%H:%M').time()
+            hora2 = datetime.strptime(horas[-1], '%H:%M').time()
+            nuevaHora = ':'.join((str(hora1)).split(':')[:-1]) + '-' + ':'.join((str(hora2)).split(':')[:-1])
+            return nuevaHora
+        
     engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
     if n_clicks == 0 and value == None:
         recomendacion2 = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
                                     con=engine)
         
+        for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
+            recomendacion2[i] = recomendacion2[i].apply(lambda x: hour_format(x))
+            
         def stars(value):
             decimal, entero = math.modf(value)
             lista = ''
@@ -145,8 +161,7 @@ def card(n_clicks, value):
                 html.Div([
                     html.P(recomendacion2.iloc[i, :]['address'], className='address'),
                     html.P(recomendacion2.iloc[i, :]['city']+', ' + recomendacion2.iloc[i, :]['state'], className='city-state'),
-                    # html.Button('ver mapa', id='map', n_clicks=0,className='button-map'),
-                    html.Button(f'Button {i}', id=f'btn-nclicks-{i}', n_clicks=0),
+                    html.Button(f'ver mapa', id=f'btn-nclicks-{i}', n_clicks=0),
                 ], className='direccion'),
                 html.Div([
                     html.Div([
@@ -174,6 +189,7 @@ def card(n_clicks, value):
         user_review = pd.read_sql(
             f"select id_business, stars from reviews where id_user = {id_user};",
             con=engine, index_col='id_business')
+        
         user_preferences = pd.merge(user_review, main_cat, left_index=True, right_index=True)
         user_stars = user_preferences['stars'].copy()
         user_preferences.drop(columns='stars', inplace=True)
@@ -185,6 +201,9 @@ def card(n_clicks, value):
         tupla_consulta = tuple(recomendacion.keys()[:30])
         recomendacion1 = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
                                     con=engine)
+        
+        for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
+            recomendacion1[i] = recomendacion1[i].apply(lambda x: hour_format(x))
         
         def stars(value):
             decimal, entero = math.modf(value)
@@ -232,10 +251,7 @@ def card(n_clicks, value):
                 html.Div([
                     html.P(recomendacion1.iloc[i,:]['address'], className='address'),
                     html.P(recomendacion1.iloc[i,:]['city']+', '+recomendacion1.iloc[i,:]['state'], className='city-state'),
-                    # html.Button('ver mapa', id='map', n_clicks=0, className='button-map'),
-                    html.Button(f'Button {i}', id=f'btn-nclicks-{i}', n_clicks=0),
-
-
+                    html.Button(f'ver mapa', id=f'btn-nclicks-{i}', n_clicks=0),
                 ], className='direccion'),
                 html.Div([
                     html.Div([
@@ -256,10 +272,20 @@ def card(n_clicks, value):
         
         return demoval
 
-# @app.callback(
-#     Output('iframe-map', 'children'),
-#     Input('map', 'n_clicks')
-# )
+
+@app.callback(
+    Output('demo', 'children'),
+    Input('btn-nclicks-0', 'n_clicks'),
+    Input('btn-nclicks-1', 'n_clicks'),
+)
+def displayBack(btn1, btn2):
+    msg = 'estado inicial'
+    if "btn-nclicks-0" == ctx.triggered_id:
+        return 'boton 1 presionado'
+    elif "btn-nclicks-1" == ctx.triggered_id:
+        return 'boton 2 presionado'
+    else:
+        return msg
 
 
 if __name__ == '__main__':

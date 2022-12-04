@@ -4,7 +4,7 @@
 }
 
 :root {
-  font-size: 16px;
+  font-size: 15px;
 }
 
 .aux {
@@ -27,6 +27,7 @@
   margin-left: 1.5vw;
   margin-right: 1.5vw;
   margin-bottom: 4vh;
+  margin-top: 4vh;
   min-height: 100vh;
 }
 .main-container .users-container .col1 {
@@ -165,6 +166,7 @@
   color: #F2F2F2;
   font-weight: 900;
   font-size: 1.5rem;
+  cursor: pointer;
 }
 .main-container .users-container .col2 .map {
   width: 100%;
