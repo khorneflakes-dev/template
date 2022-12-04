@@ -112,11 +112,12 @@ def card(n_clicks, value):
         
     engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
     if n_clicks == 0 and value == None:
-        recomendacion2 = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
+        global recomendacion
+        recomendacion = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
                                     con=engine)
         
         for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
-            recomendacion2[i] = recomendacion2[i].apply(lambda x: hour_format(x))
+            recomendacion[i] = recomendacion[i].apply(lambda x: hour_format(x))
             
         def stars(value):
             decimal, entero = math.modf(value)
@@ -131,13 +132,13 @@ def card(n_clicks, value):
 
             return lista[:5]
 
-        recomendacion2['estrellas'] = recomendacion2['stars'].apply(lambda x: stars(x))
+        recomendacion['estrellas'] = recomendacion['stars'].apply(lambda x: stars(x))
      
         
         demoval2 = html.Div([
 
             html.Div([
-                html.P(recomendacion2.iloc[i,:]['name'], className='restaurant-name'),
+                html.P(recomendacion.iloc[i,:]['name'], className='restaurant-name'),
                 html.Div([
                     html.Div([
                         html.P('Monday:'),
@@ -149,34 +150,34 @@ def card(n_clicks, value):
                         html.P('Sunday:')
                     ], className='atention-days'),
                     html.Div([
-                        html.P(recomendacion2.iloc[i, :]['Monday']),
-                        html.P(recomendacion2.iloc[i, :]['Tuesday']),
-                        html.P(recomendacion2.iloc[i, :]['Wednesday']),
-                        html.P(recomendacion2.iloc[i, :]['Thursday']),
-                        html.P(recomendacion2.iloc[i, :]['Friday']),
-                        html.P(recomendacion2.iloc[i, :]['Saturday']),
-                        html.P(recomendacion2.iloc[i, :]['Sunday'])
+                        html.P(recomendacion.iloc[i, :]['Monday']),
+                        html.P(recomendacion.iloc[i, :]['Tuesday']),
+                        html.P(recomendacion.iloc[i, :]['Wednesday']),
+                        html.P(recomendacion.iloc[i, :]['Thursday']),
+                        html.P(recomendacion.iloc[i, :]['Friday']),
+                        html.P(recomendacion.iloc[i, :]['Saturday']),
+                        html.P(recomendacion.iloc[i, :]['Sunday'])
                     ], className='atention-hours')
                 ], className='atention'),
                 html.Div([
-                    html.P(recomendacion2.iloc[i, :]['address'], className='address'),
-                    html.P(recomendacion2.iloc[i, :]['city']+', ' + recomendacion2.iloc[i, :]['state'], className='city-state'),
+                    html.P(recomendacion.iloc[i, :]['address'], className='address'),
+                    html.P(recomendacion.iloc[i, :]['city']+', ' + recomendacion.iloc[i, :]['state'], className='city-state'),
                     html.Button(f'ver mapa', id=f'btn-nclicks-{i}', n_clicks=0),
                 ], className='direccion'),
                 html.Div([
                     html.Div([
                         
                         html.Img(src=f'./assets/star{j}.png', className='star1')
-                        for j in recomendacion2.iloc[i, :]['estrellas']
+                        for j in recomendacion.iloc[i, :]['estrellas']
                         
                     ], className='stars'),
                     
-                    html.P(str(recomendacion2.iloc[i, :]['review_count']) + ' reviews', className='review-count'),
+                    html.P(str(recomendacion.iloc[i, :]['review_count']) + ' reviews', className='review-count'),
                 ], className='rating')
             ], className='card')
 
 
-            for i in list(range(len(recomendacion2)))
+            for i in list(range(len(recomendacion)))
         ], className='cards2')
         engine.dispose()
         return demoval2
@@ -199,11 +200,13 @@ def card(n_clicks, value):
         recomendacion = recomendacion.sort_values(ascending=False)
 
         tupla_consulta = tuple(recomendacion.keys()[:30])
-        recomendacion1 = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
+        
+        global recomendacion
+        recomendacion = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
                                     con=engine)
         
         for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
-            recomendacion1[i] = recomendacion1[i].apply(lambda x: hour_format(x))
+            recomendacion[i] = recomendacion[i].apply(lambda x: hour_format(x))
         
         def stars(value):
             decimal, entero = math.modf(value)
@@ -218,16 +221,16 @@ def card(n_clicks, value):
 
             return lista[:5]
 
-        recomendacion1['estrellas'] = recomendacion1['stars'].apply(lambda x: stars(x))
+        recomendacion['estrellas'] = recomendacion['stars'].apply(lambda x: stars(x))
         
-        # recomendacion1.to_csv('recomendacion1.csv', index=False)
-        # recomendacion1 = pd.read_csv('./recomendacion1.csv')
+        # recomendacion.to_csv('recomendacion.csv', index=False)
+        # recomendacion = pd.read_csv('./recomendacion.csv')
         
         
         demoval = html.Div([
 
             html.Div([
-                html.P(recomendacion1.iloc[i,:]['name'], className='restaurant-name'),
+                html.P(recomendacion.iloc[i,:]['name'], className='restaurant-name'),
                 html.Div([
                     html.Div([
                         html.P('Monday:'),
@@ -239,34 +242,34 @@ def card(n_clicks, value):
                         html.P('Sunday:')
                     ], className='atention-days'),
                     html.Div([
-                        html.P(recomendacion1.iloc[i, :]['Monday']),
-                        html.P(recomendacion1.iloc[i, :]['Tuesday']),
-                        html.P(recomendacion1.iloc[i, :]['Wednesday']),
-                        html.P(recomendacion1.iloc[i, :]['Thursday']),
-                        html.P(recomendacion1.iloc[i, :]['Friday']),
-                        html.P(recomendacion1.iloc[i, :]['Saturday']),
-                        html.P(recomendacion1.iloc[i, :]['Sunday'])
+                        html.P(recomendacion.iloc[i, :]['Monday']),
+                        html.P(recomendacion.iloc[i, :]['Tuesday']),
+                        html.P(recomendacion.iloc[i, :]['Wednesday']),
+                        html.P(recomendacion.iloc[i, :]['Thursday']),
+                        html.P(recomendacion.iloc[i, :]['Friday']),
+                        html.P(recomendacion.iloc[i, :]['Saturday']),
+                        html.P(recomendacion.iloc[i, :]['Sunday'])
                     ], className='atention-hours')
                 ], className='atention'),
                 html.Div([
-                    html.P(recomendacion1.iloc[i,:]['address'], className='address'),
-                    html.P(recomendacion1.iloc[i,:]['city']+', '+recomendacion1.iloc[i,:]['state'], className='city-state'),
+                    html.P(recomendacion.iloc[i,:]['address'], className='address'),
+                    html.P(recomendacion.iloc[i,:]['city']+', '+recomendacion.iloc[i,:]['state'], className='city-state'),
                     html.Button(f'ver mapa', id=f'btn-nclicks-{i}', n_clicks=0),
                 ], className='direccion'),
                 html.Div([
                     html.Div([
                         
                         html.Img(src=f'./assets/star{j}.png', className='star1')
-                        for j in recomendacion1.iloc[i, :]['estrellas']
+                        for j in recomendacion.iloc[i, :]['estrellas']
                         
                     ], className='stars'),
-                    html.P(str(recomendacion1.iloc[i, :]['review_count']) + ' reviews', className='review-count'),
+                    html.P(str(recomendacion.iloc[i, :]['review_count']) + ' reviews', className='review-count'),
                     
                 ], className='rating')
             ], className='card')
 
 
-            for i in list(range(len(recomendacion1)))
+            for i in list(range(len(recomendacion)))
         ], className='cards2')
         engine.dispose()
         
@@ -279,9 +282,10 @@ def card(n_clicks, value):
     Input('btn-nclicks-1', 'n_clicks'),
 )
 def displayBack(btn1, btn2):
+    
     msg = 'estado inicial'
     if "btn-nclicks-0" == ctx.triggered_id:
-        return 'boton 1 presionado'
+        return recomendacion.columns
     elif "btn-nclicks-1" == ctx.triggered_id:
         return 'boton 2 presionado'
     else:
