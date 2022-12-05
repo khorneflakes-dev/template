@@ -9,6 +9,7 @@ import math
 engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
 
 app = Dash(__name__)
+app.config.suppress_callback_exceptions=True
 
 app.title = 'YELP'
 server = app.server
@@ -323,7 +324,7 @@ def displayBack(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9):
         latitude = recomendacion['latitude'][8]
         longitude = recomendacion['longitude'][8]
 
-    iframe = html.Iframe(id='iframe-map',src=f'https://www.google.com/maps/embed/v1/place?key=AIzaSyBKqlE-X4gVVz0YNXpsJcMuaFEfqhkHIio&q={latitude},{longitude}',
+    iframe = html.Iframe(id='iframe-map',src=f'https://www.google.com/maps/embed/v1/place?key=AIzaSyBKqlE-X4gVVz0YNXpsJcMuaFEfqhkHIio&q={latitude},{longitude}&maptype=satellite',
                             style={'width':"1500", 'height':"1080", 'style':"border:0", 'loading':"lazy", 'referrerpolicy':"no-referrer-when-downgrade"}, className='iframe')
     return iframe
 
