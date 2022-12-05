@@ -18,12 +18,11 @@ app = Dash(__name__, use_pages=True,
            external_scripts=external_scripts,
            external_stylesheets=external_stylesheets)
 
-# server = app.server
+server = app.server
 app.layout = html.Div([
     html.Nav([
         html.Div([
             html.A('Logo', className='brand-logo right', href='#!'),
-            # html.A([html.I('menu', className='material-icons')], **{'data-target': 'mobile-demo'},className='sidenav-trigger', href='#' ),
             html.Ul([
                 html.Li([dcc.Link('home', href='/'),]),
                 html.Li([dcc.Link('analytics', href='/analytics'),]),
