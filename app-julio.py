@@ -9,8 +9,8 @@ from wordcloud import WordCloud
 import re
 
 # SQLAlchemy connectable
-engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
-conexion = engine.connect()
+engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp', pool_size=10, max_overflow=20)
+
 
 app = Dash(__name__)
 app.config.suppress_callback_exceptions=True
@@ -34,7 +34,7 @@ app.layout = html.Div([
                 
                 dcc.Dropdown(['All categories','Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants'], 'All categories', id='categories'),
                 
-                dcc.RangeSlider(2005, 2021, 1, value=[2020, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True},id='year-slider')
+                dcc.RangeSlider(2005, 2021, 1, value=[2019, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True},id='year-slider')
                 
             ],className='row1-col1-row1'), # filter y slider
             
@@ -120,7 +120,7 @@ app.layout = html.Div([
     Input('categories', 'value')
 )
 def experience_map(slider, categorie):
-    
+    conexion = engine.connect()
     if categorie == 'All categories': # estado inicial
         conexion = engine.connect()
         anio_ini = slider[0]
@@ -140,7 +140,7 @@ def experience_map(slider, categorie):
         query_result = conexion.execute(query)
         df_be = pd.DataFrame(query_result.fetchall())
         df_be.columns = query_result.keys()
-        del query_result
+        
 
         # calculate the percentage of 4 + 5 stars
         df_be_per = round(100*df_be[df_be.stars>=4].groupby(by=['state'])['conteo_rev'].agg('sum') / df_be.groupby(by=['state'])['conteo_rev'].agg('sum'), 2)
@@ -151,7 +151,7 @@ def experience_map(slider, categorie):
                         scope="usa",
                         hover_name=df_be_per.index.to_list(),
                         )
-        conexion.close()
+        
         
         return fig
     
@@ -173,7 +173,7 @@ def experience_map(slider, categorie):
         query_result = conexion.execute(query)
         df_be = pd.DataFrame(query_result.fetchall())
         df_be.columns = query_result.keys()
-        del query_result
+        
 
         # calculate the percentage of 4 + 5 stars
         df_be_per = round(100*df_be[df_be.stars>=4].groupby(by=['state'])['conteo_rev'].agg('sum') / df_be.groupby(by=['state'])['conteo_rev'].agg('sum'), 2)
@@ -184,7 +184,7 @@ def experience_map(slider, categorie):
                         scope="usa",
                         hover_name=df_be_per.index.to_list(),
                         )
-        conexion.close()
+        
 
         return fig
         
@@ -197,7 +197,7 @@ def experience_map(slider, categorie):
     Input('categories', 'value')
 )
 def heatmap_graph(slider, categorie):
-    engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
+    
     conexion = engine.connect()
     if categorie == 'All categories': # estado inicial
 
@@ -218,7 +218,7 @@ def heatmap_graph(slider, categorie):
         query_result = conexion.execute(query)
         df_bb = pd.DataFrame(query_result.fetchall())
         df_bb.columns = query_result.keys()
-        del query_result
+        
         
         # calcula el porcentage de diferencia anual 
         df_bb['per_dif'] = 0.0
@@ -234,7 +234,7 @@ def heatmap_graph(slider, categorie):
         df = df_bb.pivot(index='state' ,columns='year' , values='per_dif')
         df = df.drop(df.columns[0], axis='columns')        
         fig = px.imshow(df)
-        conexion.close()
+        
                
         return fig
     
@@ -256,7 +256,7 @@ def heatmap_graph(slider, categorie):
         query_result = conexion.execute(query)
         df_bb = pd.DataFrame(query_result.fetchall())
         df_bb.columns = query_result.keys()
-        del query_result
+        
         
         # calcula el porcentage de diferencia anual 
         df_bb['per_dif'] = 0.0
@@ -284,6 +284,7 @@ def heatmap_graph(slider, categorie):
     Input('categories', 'value')
 )
 def top_retention(clk_data, categorie):
+    conexion = engine.connect()
     if clk_data == None:
         if categorie == 'All categories':
             filtro_categorie =  ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')
@@ -358,7 +359,7 @@ def top_retention(clk_data, categorie):
         
         return fig
 
-# top 10 satisfaccion
+# # top 10 satisfaccion
 
 @app.callback(
     Output('top-satisfaction', 'figure'),
@@ -367,6 +368,7 @@ def top_retention(clk_data, categorie):
     Input('year-slider', 'value')
 )
 def top_satisfaction(clk_data, categorie, slider):
+    conexion = engine.connect()
     anio_ini = slider[0]
     anio_fin = slider[-1]
 
@@ -374,12 +376,12 @@ def top_satisfaction(clk_data, categorie, slider):
     if clk_data == None:
         filtro_state = "('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')" #
     elif clk_data != None:
-        filtro_state = f'("{clk_data["points"][0]["location"]}")'
+        filtro_state = f"('{clk_data['points'][0]['location']}')"
     
     if categorie == 'All categories':
         filtro_categorie =  "('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')"
     elif categorie != 'All categories':
-        filtro_categorie = f'("{categorie})'
+        filtro_categorie = f'("{categorie}")'
 
     query = f"""select b.name , avg(r.stars) , count(r.id_review) as cant_rev
     from reviews r 
@@ -393,11 +395,7 @@ def top_satisfaction(clk_data, categorie, slider):
     query_result = conexion.execute(query)
     business_satisfaction = pd.DataFrame(query_result.fetchall())
     business_satisfaction.columns = query_result.keys()
-    del query_result
-
-
-        
-
+    
     # get the amount of business with average star greater than 4
 
     query = f"""select b.name , count(distinct b.address) as cant_suc
@@ -411,7 +409,7 @@ def top_satisfaction(clk_data, categorie, slider):
     query_result = conexion.execute(query)
     cant_suc = pd.DataFrame(query_result.fetchall())
     cant_suc.columns = query_result.keys()
-    del query_result
+    
 
 
     # agrega columna calculada = promedio estrellas*(cant. de reviews/cant. de sucursales)
@@ -441,6 +439,7 @@ def top_satisfaction(clk_data, categorie, slider):
     
 )
 def wordcloud_graph(clk_data, categorie, slider, word_selector):
+    conexion = engine.connect()
     anio_ini = slider[0]
     anio_fin = slider[-1]
 
@@ -501,7 +500,7 @@ def wordcloud_graph(clk_data, categorie, slider, word_selector):
         paper_bgcolor="#F9F9FA",
         plot_bgcolor="#F9F9FA",
     )
-    conexion.close()
+    
     return fig
 
 
