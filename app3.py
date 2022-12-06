@@ -1,40 +1,42 @@
 from dash import Dash, html, dcc
 import dash
-import pandas as pd 
+import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-from sqlalchemy import create_engine 
+from sqlalchemy import create_engine
 
 # SQLAlchemy connectable
-engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
+engine = create_engine(
+	'mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
 
-# external JavaScript files
-external_scripts = ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js']
-
-# external CSS stylesheets
-external_stylesheets = ['https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css']
-
-app = Dash(__name__, use_pages=True,
-           external_scripts=external_scripts,
-           external_stylesheets=external_stylesheets)
+app = Dash(__name__, use_pages=True, suppress_callback_exceptions=True)
 
 server = app.server
 app.layout = html.Div([
-    html.Nav([
+    
+    html.Div([
         html.Div([
-            html.A('Logo', className='brand-logo right', href='#!'),
-            html.Ul([
-                html.Li([dcc.Link('home', href='/'),]),
-                html.Li([dcc.Link('analytics', href='/analytics'),]),
-                html.Li([dcc.Link('users', href='/users'),]),
-                html.Li([dcc.Link('about us', href='/about'),]),
-            ], className='hide-on-med-and-down center navbar-left'),
-        ], className='nav-wrapper navbar'),
-    ]),
-    
-    
-	dash.page_container
+            html.Img(src='./assets/logo.png'),
+        ], className='logo'),
+        dcc.Link('home', href='/'),
+        dcc.Link('business', href='/business'),
+        dcc.Link('users', href='/users'),
+        dcc.Link('about us', href='/about'),
+        
+        
+        # html.Li([dcc.Link('home', href='/'),]),
+        # html.Li([dcc.Link('business', href='/business'),]),
+        # html.Li([dcc.Link('users', href='/users'),]),
+        # html.Li([dcc.Link('about us', href='/about'),]),
+    ], className='navbar'),
+
+   	dash.page_container
 ])
 
 if __name__ == '__main__':
-	app.run_server(debug=True)
+	app.run_server(
+                # debug=True, # enable reload when file save
+                threaded=True, # enable dev tools
+                dev_tools_hot_reload=True, # hot reload, only true for css design
+                # use_reloader=True, 
+                )

@@ -18,7 +18,29 @@ $color-texto2: rgba(0, 0, 0, 0.69);
 }
 
 .navbar{
-    background-color: rgb(43, 43, 43);
+    background-color: $color-fondo;
+    display: flex;
+    height: 5vh;
+    font-family: $fuente-principal;
+    gap: 2vw;
+    border-bottom: 1px solid #2a2a2a69;
+    align-items: center;
+    padding-left: 1.5vw;
+    a{
+        color: $color-texto1;
+        text-decoration: none;
+        font-size: 2rem;
+        font-weight: 400;
+    }
+    .logo{
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img{
+            height: 80%;
+        }
+    }
 
 }
 
@@ -33,7 +55,7 @@ $color-texto2: rgba(0, 0, 0, 0.69);
         margin-left: 1.5vw;
         margin-right: 1.5vw;
         margin-bottom: 4vh;
-        margin-top: 4vh;
+        margin-top: 2.4vh;
         min-height: 100vh;
         .col1{
             width: 60%;
