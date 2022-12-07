@@ -32,9 +32,9 @@ app.layout = html.Div([
                 
                 html.P('filter by:', className='filter'),
                 
-                dcc.Dropdown(['All categories','Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants'], 'Active Life', id='categories', className='dropdown'),
+                dcc.Dropdown(['All categories','Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants'], 'All categories', id='categories', className='dropdown'),
                 
-                dcc.RangeSlider(2005, 2021, 1, value=[2020, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True},id='year-slider', className='range-slider')
+                dcc.RangeSlider(2005, 2021, 1, value=[2017, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True}, id='year-slider', className='range-slider')
                 
             ],className='row1-col1-row1'), # filter y slider
             
