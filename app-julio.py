@@ -30,24 +30,27 @@ app.layout = html.Div([
         html.Div([
             html.Div([
                 
-                html.P('filter by:'),
+                html.P('filter by:', className='filter'),
                 
-                dcc.Dropdown(['All categories','Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants'], 'All categories', id='categories'),
+                dcc.Dropdown(['All categories','Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants'], 'Active Life', id='categories', className='dropdown'),
                 
-                dcc.RangeSlider(2005, 2021, 1, value=[2019, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True},id='year-slider')
+                dcc.RangeSlider(2005, 2021, 1, value=[2020, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True},id='year-slider', className='range-slider')
                 
             ],className='row1-col1-row1'), # filter y slider
             
             html.Div([
                 
-                html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.'),
+                html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.', className='map-description'),
                 
                 html.Div([
                     
-                    html.P('CUSTOMER EXPERIENCE SATISFACTION (Percentage of reviews with stars>=4)'),
+                    html.P('CUSTOMER EXPERIENCE SATISFACTION (Percentage of reviews with stars >= 4)', className='map-title'),
+                    html.Div([
+                        
+                        dcc.Graph(id='experience-map',style={'width': '40vw', 'height': '40vh'}, className='experience-map')
+                        
+                    ], className='map-container'),
                     
-                    dcc.Graph(id='experience-map')
-                                        
                 ], className='experience-container')
                                 
             ], className='row1-col1-row2')
@@ -56,15 +59,15 @@ app.layout = html.Div([
         
         html.Div([
             
-            html.P('Data Driven Investing Dashboard'),
+            html.P('Data Driven Investing Dashboard', className='dashboard-title'),
             
             html.Div([
                 
-                html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.'),
+                html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.', className='heatmap-description'),
                 
                 html.Div([
-                    
-                    dcc.Graph(id='heatmap-trends')
+                    html.P('ANUAL MARKET GROWTH (difference in the number of companies reviewed per year)', className='heatmap-title'),    
+                    dcc.Graph(id='heatmap-trends', className='heatmap-graph',style={'width': '32vw', 'height': '40vh'})
                     
                 ], className='heatmap-tendencias')
                 
@@ -78,33 +81,35 @@ app.layout = html.Div([
         
         html.Div([
             
-            html.P('TOP BUSINESS BY CUSTOMER RETENTION'),
+            html.P('TOP BUSINESS BY CUSTOMER RETENTION', className='title-retention'),
             
-            dcc.Graph(id='top-retention')
+            dcc.Graph(id='top-retention',style={'width': '28vw', 'height': '40vh'}, className='top-retention')
             
         ], className='row1-col1'),
         
         
         html.Div([
                         
-            html.P('TOP BUSINESS BY CUSTOMER SATISFACTION'),
+            html.P('TOP BUSINESS BY CUSTOMER SATISFACTION', className='title-satisfaction'),
             
-            dcc.Graph(id='top-satisfaction')
+            dcc.Graph(id='top-satisfaction', style={'width': '28vw', 'height': '40vh'}, className='top-satisfaction')
             
         ], className='row1-col2'),
         
         
         html.Div([
-        
-            dcc.RadioItems(['Categories', 'Attributes'], 'Categories', id='word-selector'),
+            dcc.RadioItems(id='word-selector', options=[
+                    {'label': html.Div(['Categories'], className='option'), 'value': 'Categories'},
+                    {'label': html.Div(['Attributes'], className='option'), 'value': 'Attributes'},
+                ], value='Categories', className='radio-items'),
             
-            dcc.Graph(id='wordcloud'),
+            dcc.Graph(id='wordcloud',style={'width': '30vw', 'height': '30vh'}),
             
             html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.')
             
         ], className='row1-col3'),
       
-    ], className='business-row2'),
+    ], className='business-row2 wrapper'),
      
 ], className = 'business1-container')
 
@@ -151,8 +156,13 @@ def experience_map(slider, categorie):
                         scope="usa",
                         hover_name=df_be_per.index.to_list(),
                         )
-        
-        
+        fig.update_layout({
+            'plot_bgcolor': 'rgba(1, 1, 1, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+        })
+        # fig.update_layout(coloraxis_showscale=False)
+        fig.update_layout(margin=dict(l=0, r=50, t=0, b=0),paper_bgcolor='rgba(255, 255, 255, 0)',plot_bgcolor='rgba(255, 255, 255, 0)')
+        fig.update_layout(geo=dict(bgcolor= 'rgba(0,0,0,0)'))
         return fig
     
     elif categorie != 'All categories':
@@ -184,6 +194,13 @@ def experience_map(slider, categorie):
                         scope="usa",
                         hover_name=df_be_per.index.to_list(),
                         )
+        fig.update_layout({
+            'plot_bgcolor': 'rgba(1, 1, 1, 0)',
+            'paper_bgcolor': 'rgba(0, 0, 0, 0)',
+        })
+        # fig.update_layout(coloraxis_showscale=False)
+        fig.update_layout(margin=dict(l=0, r=0, t=50, b=0),paper_bgcolor='rgba(255, 255, 255, 0)',plot_bgcolor='rgba(255, 255, 255, 0)')
+        fig.update_layout(geo=dict(bgcolor= 'rgba(0,0,0,0)'))
         
 
         return fig
@@ -234,6 +251,7 @@ def heatmap_graph(slider, categorie):
         df = df_bb.pivot(index='state' ,columns='year' , values='per_dif')
         df = df.drop(df.columns[0], axis='columns')        
         fig = px.imshow(df)
+        fig.update_layout(margin=dict(l=0, r=0, t=60, b=20),paper_bgcolor='rgba(255, 255, 255, 0)',plot_bgcolor='rgba(255, 255, 255, 0)')
         
                
         return fig
@@ -273,6 +291,7 @@ def heatmap_graph(slider, categorie):
         df = df.drop(df.columns[0], axis='columns')
 
         fig = px.imshow(df)
+        fig.update_layout(margin=dict(l=0, r=0, t=60, b=20),paper_bgcolor='rgba(255, 255, 255, 0)',plot_bgcolor='rgba(255, 255, 255, 0)')
                        
         return fig
 
@@ -290,7 +309,7 @@ def top_retention(clk_data, categorie):
             filtro_categorie =  ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')
         elif categorie != 'All categories':
             filtro_categorie = f"('{categorie}')"
-        print(clk_data, categorie)
+        
         filtro_state = ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
         
 
@@ -318,7 +337,8 @@ def top_retention(clk_data, categorie):
 
         df_r = df_r.sort_values(by='avg(date_dif)', ascending=False).head(10)
         fig = px.funnel(df_r, x='avg(date_dif)', y='name')
-        
+        fig.update_layout(yaxis_title=None)
+        fig.update_layout(margin=dict(l=0, r=0, t=70, b=50),paper_bgcolor='rgba(255, 255, 255, 0)',plot_bgcolor='rgba(255, 255, 255, 0)')
         return fig
 
     elif clk_data != None:
@@ -330,7 +350,7 @@ def top_retention(clk_data, categorie):
         elif categorie != 'All categories':
             filtro_categorie = f"('{categorie}')"
             
-        print(clk_data["points"][0]["location"], categorie)
+        
         
         query = f"""create or replace view dif_date as
         select  r.id_user , b.name,  count(r.id_user) as reviews_per_user, timestampdiff(month, min(r.date), max(r.date)) as date_dif  
@@ -356,7 +376,8 @@ def top_retention(clk_data, categorie):
 
         df_r = df_r.sort_values(by='avg(date_dif)', ascending=False).head(10)
         fig = px.funnel(df_r, x='avg(date_dif)', y='name')
-        
+        fig.update_layout(yaxis_title=None)
+        fig.update_layout(margin=dict(l=0, r=0, t=70, b=50),paper_bgcolor='rgba(255, 255, 255, 0)',plot_bgcolor='rgba(255, 255, 255, 0)')
         return fig
 
 # # top 10 satisfaccion
@@ -426,6 +447,10 @@ def top_satisfaction(clk_data, categorie, slider):
                 
                 )
     fig.update_xaxes(range=[4, 5])
+    fig.update_layout(yaxis_title=None)
+    fig.update_layout(xaxis_title=None)
+    fig.update_layout(margin=dict(l=0, r=0, t=70, b=50),paper_bgcolor='rgba(255, 255, 255, 0)',plot_bgcolor='rgba(255, 255, 255, 0)')
+
     return fig
 
 
@@ -489,9 +514,10 @@ def wordcloud_graph(clk_data, categorie, slider, word_selector):
         texto = " ".join(re.sub("\(|\,","", palabras ) for palabras in categories_CA_45.attributes)
         
 
-    wordcloud_image = WordCloud(collocations = False, background_color="white", width=640, height=480).generate(texto)
+    wordcloud_image = WordCloud(collocations = False, background_color="white", width=800, height=480).generate(texto)
     wordcloud_image = wordcloud_image.to_array()
     fig = px.imshow(wordcloud_image)
+    
     fig.update_layout(
         xaxis={'visible': False},
         yaxis={'visible': False},
@@ -500,9 +526,18 @@ def wordcloud_graph(clk_data, categorie, slider, word_selector):
         paper_bgcolor="#F9F9FA",
         plot_bgcolor="#F9F9FA",
     )
+    fig.update_layout(
+    margin=dict(l=0, r=0, t=0, b=0),
+)
     
     return fig
 
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+    # app.run_server(
+    #             debug=True, # enable reload when file save
+    #             threaded=True, # enable dev tools
+    #             dev_tools_hot_reload=True, # hot reload, only true for css design
+    #             # use_reloader=True, 
+    #             )
