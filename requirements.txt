@@ -67,7 +67,6 @@ pytest
 pytest-cov
 pytest-mock
 python-dateutil
-python-dotenv
 pywin32
 pyzmq
 repoze.lru
