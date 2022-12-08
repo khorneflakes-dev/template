@@ -67,7 +67,6 @@ pytest
 pytest-cov
 pytest-mock
 python-dateutil
-pywin32
 pyzmq
 repoze.lru
 six
