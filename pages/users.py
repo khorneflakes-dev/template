@@ -86,6 +86,7 @@ def update_output(n_clicks, value):
     else:
         return 'Welcome'
 
+recomendacion_final = ''
 
 # funcion para crear las cards de los restaurantes recomendados
 @callback(
@@ -94,9 +95,7 @@ def update_output(n_clicks, value):
     State('enter-id', 'value')    
 )
 def card(n_clicks, value):
-    global recomendacion
-    
-    
+
     def hour_format(value):
         from datetime import datetime
         from time import strptime
@@ -110,6 +109,9 @@ def card(n_clicks, value):
             return nuevaHora
         
     engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
+    
+    global recomendacion_final
+    
     if n_clicks == 0 and value == None:
         # global recomendacion
         recomendacion = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
@@ -179,12 +181,12 @@ def card(n_clicks, value):
             for i in list(range(len(recomendacion)))
         ], className='cards2')
         engine.dispose()
-        print(recomendacion)
+        
+        recomendacion_final = recomendacion
         return demoval2
     
     elif n_clicks > 0 and value != None:
         
-        global recomendacion2
         id_user = value
         main_cat = pd.read_parquet('main_cat.parquet.gzip')
 
@@ -197,17 +199,17 @@ def card(n_clicks, value):
         user_preferences.drop(columns='stars', inplace=True)
         user_stars.shape, user_preferences.transpose().shape
         user_perfil = user_preferences.transpose().dot(user_stars)
-        recomendacion2 = (main_cat * user_perfil).sum(axis=1)/(user_perfil.sum())
-        recomendacion2 = recomendacion2.sort_values(ascending=False)
+        recomendacion = (main_cat * user_perfil).sum(axis=1)/(user_perfil.sum())
+        recomendacion = recomendacion.sort_values(ascending=False)
 
-        tupla_consulta = tuple(recomendacion2.keys()[:30])
+        tupla_consulta = tuple(recomendacion.keys()[:30])
         
-        # global recomendacion2
-        recomendacion2 = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
+        # global recomendacion
+        recomendacion = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
                                     con=engine)
         
         for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
-            recomendacion2[i] = recomendacion2[i].apply(lambda x: hour_format(x))
+            recomendacion[i] = recomendacion[i].apply(lambda x: hour_format(x))
         
         def stars(value):
             decimal, entero = math.modf(value)
@@ -222,16 +224,16 @@ def card(n_clicks, value):
 
             return lista[:5]
 
-        recomendacion2['estrellas'] = recomendacion2['stars'].apply(lambda x: stars(x))
+        recomendacion['estrellas'] = recomendacion['stars'].apply(lambda x: stars(x))
         
-        # recomendacion2.to_csv('recomendacion2.csv', index=False)
-        # recomendacion2 = pd.read_csv('./recomendacion2.csv')
+        # recomendacion.to_csv('recomendacion.csv', index=False)
+        # recomendacion = pd.read_csv('./recomendacion.csv')
         
         
         demoval = html.Div([
 
             html.Div([
-                html.P(recomendacion2.iloc[i,:]['name'], className='restaurant-name'),
+                html.P(recomendacion.iloc[i,:]['name'], className='restaurant-name'),
                 html.Div([
                     html.Div([
                         html.P('Monday:'),
@@ -243,37 +245,40 @@ def card(n_clicks, value):
                         html.P('Sunday:')
                     ], className='atention-days'),
                     html.Div([
-                        html.P(recomendacion2.iloc[i, :]['Monday']),
-                        html.P(recomendacion2.iloc[i, :]['Tuesday']),
-                        html.P(recomendacion2.iloc[i, :]['Wednesday']),
-                        html.P(recomendacion2.iloc[i, :]['Thursday']),
-                        html.P(recomendacion2.iloc[i, :]['Friday']),
-                        html.P(recomendacion2.iloc[i, :]['Saturday']),
-                        html.P(recomendacion2.iloc[i, :]['Sunday'])
+                        html.P(recomendacion.iloc[i, :]['Monday']),
+                        html.P(recomendacion.iloc[i, :]['Tuesday']),
+                        html.P(recomendacion.iloc[i, :]['Wednesday']),
+                        html.P(recomendacion.iloc[i, :]['Thursday']),
+                        html.P(recomendacion.iloc[i, :]['Friday']),
+                        html.P(recomendacion.iloc[i, :]['Saturday']),
+                        html.P(recomendacion.iloc[i, :]['Sunday'])
                     ], className='atention-hours')
                 ], className='atention'),
                 html.Div([
-                    html.P(recomendacion2.iloc[i,:]['address'], className='address'),
-                    html.P(recomendacion2.iloc[i,:]['city']+', '+recomendacion2.iloc[i,:]['state'], className='city-state'),
+                    html.P(recomendacion.iloc[i,:]['address'], className='address'),
+                    html.P(recomendacion.iloc[i,:]['city']+', '+recomendacion.iloc[i,:]['state'], className='city-state'),
                     html.Button(f'show map', id=f'btn-nclicks-{i}', n_clicks=0),
                 ], className='direccion'),
                 html.Div([
                     html.Div([
                         
                         html.Img(src=f'./assets/star{j}.png', className='star1')
-                        for j in recomendacion2.iloc[i, :]['estrellas']
+                        for j in recomendacion.iloc[i, :]['estrellas']
                         
                     ], className='stars'),
-                    html.P(str(recomendacion2.iloc[i, :]['review_count']) + ' reviews', className='review-count'),
+                    html.P(str(recomendacion.iloc[i, :]['review_count']) + ' reviews', className='review-count'),
                     
                 ], className='rating')
             ], className='card')
 
 
-            for i in list(range(len(recomendacion2)))
+            for i in list(range(len(recomendacion)))
         ], className='cards2')
         engine.dispose()
-        print(recomendacion2)
+        
+        
+        recomendacion_final = recomendacion
+        
         return demoval
 
 
@@ -288,71 +293,40 @@ def card(n_clicks, value):
     Input('btn-nclicks-6', 'n_clicks'),
     Input('btn-nclicks-7', 'n_clicks'),
     Input('btn-nclicks-8', 'n_clicks'),
-    Input('login', 'n_clicks'),
-    State('enter-id', 'value')  
+
 )
-def displayBack(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9,n_clicks, value):
+def displayBack(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9):
     
     latitude = ''
     longitude = ''
-    if n_clicks == 0 and value == None:
-        if "btn-nclicks-0" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][0]
-            longitude = recomendacion['longitude'][0]
-        elif "btn-nclicks-1" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][1]
-            longitude = recomendacion['longitude'][1]
-        elif "btn-nclicks-2" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][2]
-            longitude = recomendacion['longitude'][2]
-        elif "btn-nclicks-3" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][3]
-            longitude = recomendacion['longitude'][3]
-        elif "btn-nclicks-4" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][4]
-            longitude = recomendacion['longitude'][4]
-        elif "btn-nclicks-5" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][5]
-            longitude = recomendacion['longitude'][5]
-        elif "btn-nclicks-6" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][6]
-            longitude = recomendacion['longitude'][6]
-        elif "btn-nclicks-7" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][7]
-            longitude = recomendacion['longitude'][7]
-        elif "btn-nclicks-8" == ctx.triggered_id:
-            latitude = recomendacion['latitude'][8]
-            longitude = recomendacion['longitude'][8]
-    
-    else:
-        if "btn-nclicks-0" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][0]
-            longitude = recomendacion2['longitude'][0]
-        elif "btn-nclicks-1" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][1]
-            longitude = recomendacion2['longitude'][1]
-        elif "btn-nclicks-2" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][2]
-            longitude = recomendacion2['longitude'][2]
-        elif "btn-nclicks-3" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][3]
-            longitude = recomendacion2['longitude'][3]
-        elif "btn-nclicks-4" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][4]
-            longitude = recomendacion2['longitude'][4]
-        elif "btn-nclicks-5" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][5]
-            longitude = recomendacion2['longitude'][5]
-        elif "btn-nclicks-6" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][6]
-            longitude = recomendacion2['longitude'][6]
-        elif "btn-nclicks-7" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][7]
-            longitude = recomendacion2['longitude'][7]
-        elif "btn-nclicks-8" == ctx.triggered_id:
-            latitude = recomendacion2['latitude'][8]
-            longitude = recomendacion2['longitude'][8]
-    
+    if "btn-nclicks-0" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][0]
+        longitude = recomendacion_final['longitude'][0]
+    elif "btn-nclicks-1" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][1]
+        longitude = recomendacion_final['longitude'][1]
+    elif "btn-nclicks-2" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][2]
+        longitude = recomendacion_final['longitude'][2]
+    elif "btn-nclicks-3" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][3]
+        longitude = recomendacion_final['longitude'][3]
+    elif "btn-nclicks-4" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][4]
+        longitude = recomendacion_final['longitude'][4]
+    elif "btn-nclicks-5" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][5]
+        longitude = recomendacion_final['longitude'][5]
+    elif "btn-nclicks-6" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][6]
+        longitude = recomendacion_final['longitude'][6]
+    elif "btn-nclicks-7" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][7]
+        longitude = recomendacion_final['longitude'][7]
+    elif "btn-nclicks-8" == ctx.triggered_id:
+        latitude = recomendacion_final['latitude'][8]
+        longitude = recomendacion_final['longitude'][8]
+
 
     iframe = html.Iframe(id='iframe-map',src=f'https://www.google.com/maps/embed/v1/place?key=AIzaSyBKqlE-X4gVVz0YNXpsJcMuaFEfqhkHIio&q={latitude},{longitude}&maptype=satellite',
                             style={'width':"1500", 'height':"1080", 'style':"border:0", 'loading':"lazy", 'referrerpolicy':"no-referrer-when-downgrade"}, className='iframe')
