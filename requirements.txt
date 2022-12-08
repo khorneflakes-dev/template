@@ -1,4 +1,5 @@
 asttokens
+uvicorn
 attrs
 autopep8
 backcall

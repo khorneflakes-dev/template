@@ -112,7 +112,81 @@ def card(n_clicks, value):
     
     global recomendacion_final
     
-    if n_clicks > 0 and value != None:
+    if n_clicks == 0 and value == None:
+        # global recomendacion
+        recomendacion = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
+                                    con=engine)
+        
+        for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
+            recomendacion[i] = recomendacion[i].apply(lambda x: hour_format(x))
+            
+        def stars(value):
+            decimal, entero = math.modf(value)
+            lista = ''
+            for i in list(range(int(entero))):
+                lista += 'A'
+            if decimal != 0:
+                lista += 'B'
+
+            for i in list(range(5)):
+                lista += 'C'
+
+            return lista[:5]
+
+        recomendacion['estrellas'] = recomendacion['stars'].apply(lambda x: stars(x))
+     
+        
+        demoval2 = html.Div([
+
+            html.Div([
+                html.P(recomendacion.iloc[i,:]['name'], className='restaurant-name'),
+                html.Div([
+                    html.Div([
+                        html.P('Monday:'),
+                        html.P('Tuesday:'),
+                        html.P('Wednesday:'),
+                        html.P('Thursday:'),
+                        html.P('Friday:'),
+                        html.P('Saturday:'),
+                        html.P('Sunday:')
+                    ], className='atention-days'),
+                    html.Div([
+                        html.P(recomendacion.iloc[i, :]['Monday']),
+                        html.P(recomendacion.iloc[i, :]['Tuesday']),
+                        html.P(recomendacion.iloc[i, :]['Wednesday']),
+                        html.P(recomendacion.iloc[i, :]['Thursday']),
+                        html.P(recomendacion.iloc[i, :]['Friday']),
+                        html.P(recomendacion.iloc[i, :]['Saturday']),
+                        html.P(recomendacion.iloc[i, :]['Sunday'])
+                    ], className='atention-hours')
+                ], className='atention'),
+                html.Div([
+                    html.P(recomendacion.iloc[i, :]['address'], className='address'),
+                    html.P(recomendacion.iloc[i, :]['city']+', ' + recomendacion.iloc[i, :]['state'], className='city-state'),
+                    html.Button(f'show map', id=f'btn-nclicks-{i}', n_clicks=0),
+                ], className='direccion'),
+                html.Div([
+                    html.Div([
+                        
+                        html.Img(src=f'./assets/star{j}.png', className='star1')
+                        for j in recomendacion.iloc[i, :]['estrellas']
+                        
+                    ], className='stars'),
+                    
+                    html.P(str(recomendacion.iloc[i, :]['review_count']) + ' reviews', className='review-count'),
+                ], className='rating')
+            ], className='card')
+
+
+            for i in list(range(len(recomendacion)))
+        ], className='cards2')
+        engine.dispose()
+        
+        recomendacion_final = recomendacion
+        recomendacion_final.to_csv('./recomendacion_final.csv', index=False)
+        return demoval2
+    
+    elif n_clicks != 0 and value != None:
         
         id_user = value
         main_cat = pd.read_parquet('main_cat.parquet.gzip')
