@@ -94,7 +94,6 @@ def update_output(n_clicks, value):
     State('enter-id', 'value')    
 )
 def card(n_clicks, value):
-    global recomendacion
     
     
     def hour_format(value):
@@ -112,6 +111,8 @@ def card(n_clicks, value):
     engine = create_engine('mysql+pymysql://root:projectyelp2022@34.176.218.33/projectyelp')
     if n_clicks == 0 and value == None:
         # global recomendacion
+        
+        global recomendacion
         recomendacion = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
                                     con=engine)
         
@@ -200,7 +201,7 @@ def card(n_clicks, value):
 
         tupla_consulta = tuple(recomendacion.keys()[:30])
         
-        # global recomendacion
+        global recomendacion
         recomendacion = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
                                     con=engine)
         
