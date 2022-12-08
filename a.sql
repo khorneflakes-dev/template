@@ -62,3 +62,147 @@ select count(DISTINCT(state)) from business_city_state limit 10;
 select count(b.business_id) as business_per_state, cs.state from business b
 left join business_city_state cs on b.city_state_id = cs.city_state_id group by cs.state order by business_per_state desc;
 
+
+
+/* julio */
+/* 1.  */
+
+/* grafica 1 con filtro de anios solamente */
+select bce.state, bc.p_categorie , r.stars , count(r.id_review) as conteo_rev
+from reviews r 
+join business b on(r.id_business = b.business_id) 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where r.year >= 2017 and r.year <=2022
+group by bce.state, bc.p_categorie , r.stars 
+order by bce.state, bc.p_categorie, r.stars;
+
+
+
+
+
+show tables;
+
+
+
+
+
+/* grafica 2  con filtro de categorias eg. restaurantes*/
+select bce.state, bc.p_categorie , r.stars , count(r.id_review) as conteo_rev
+from reviews r 
+join business b on(r.id_business = b.business_id) 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where r.year >= 2017 and r.year <=2022 and bc.p_categorie = 'Restaurants' and bce.state = 'LA'
+group by bce.state, bc.p_categorie , r.stars 
+order by bce.state, bc.p_categorie, r.stars;
+
+
+/* del total de reviews calcular una columna con el porcentaje de 4 o n estrellas */
+
+/* state| # reviews 4> stars | # total reviews | percentage */
+
+select * from business;
+show tables;
+
+select bce.state, r.stars , count(r.id_review) as conteo_rev
+    from reviews r
+    join business b on(r.id_business = b.business_id)
+    join business_categories bc on(b.categories_id = bc.categories_id)
+    join business_city_state bce on (b.city_state_id = bce.city_state_id)
+    where r.year >=2010 and r.year <=2021 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants') and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+    group by bce.state , r.stars
+    order by bce.state, r.stars;
+
+
+/* heatmap */
+
+select bce.state, r.year, count( distinct business_id)  as count_business
+    from reviews r 
+    join business b on(r.id_business = b.business_id) 
+    join business_categories bc on(b.categories_id = bc.categories_id)
+    join business_city_state bce on (b.city_state_id = bce.city_state_id)
+    where b.stars >=4 and r.year >=2010 and r.year <=2021 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants') and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+    group by bce.state, r.year
+    order by bce.state, r.year;
+
+
+select bce.state, r.year, count( distinct business_id)  as count_business
+from reviews r 
+join business b on(r.id_business = b.business_id) 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where b.stars >=4 and r.year >=2017 and r.year <=2021 and bc.p_categorie = 'Food' and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+group by bce.state, r.year
+order by bce.state, r.year;
+
+select bce.state, r.stars , count(r.id_review) as conteo_rev
+        from reviews r
+        join business b on(r.id_business = b.business_id)
+        join business_categories bc on(b.categories_id = bc.categories_id)
+        join business_city_state bce on (b.city_state_id = bce.city_state_id)
+        where r.year >=2010 and r.year <=2021 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants') and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+        group by bce.state , r.stars
+        order by bce.state, r.stars;
+
+
+/* para saber la cantidad de negocios cerrados por anio y por categoria con filtro de anios y categoria */
+
+/* cantidad de negocios cerrados por estado  */
+select r.year ,count(distinct b.business_id) as business_close, bc.p_categorie
+from reviews r 
+join business b on(r.id_business = b.business_id) 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where b.is_open = 0 and r.year >= 2010 and r.year <=2021 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')
+and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+group by r.year, bc.p_categorie;
+
+/* cantidad total de negocios  */
+select r.year ,count(distinct b.business_id) as total_business, bc.p_categorie
+from reviews r 
+join business b on(r.id_business = b.business_id) 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where r.year >= 2010 and r.year <=2021 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')
+and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+group by r.year, bc.p_categorie;
+
+
+
+/* spline */
+create or replace view date_closed as
+select b.business_id, bc.p_categorie, max(r.year) as final_year
+from reviews r
+join business b on(r.id_business = b.business_id)
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where b.is_open=0 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants') and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+group by b.business_id;
+
+select final_year as year , p_categorie ,count(business_id) as business_close from date_closed group by final_year, p_categorie order by p_categorie, final_year;
+
+select r.year ,count(distinct b.business_id) as total_business, bc.p_categorie
+from reviews r 
+join business b on(r.id_business = b.business_id) 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where r.year >= 2010 and r.year <=2021 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')
+and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+group by r.year, bc.p_categorie;
+
+
+/* top close */
+select b.name, count(b.business_id) as top_close from business b 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where b.is_open = 0 and bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')
+and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+group by b.name order by top_close desc;
+
+select b.name, count(b.business_id) as total from business b 
+join business_categories bc on(b.categories_id = bc.categories_id)
+join business_city_state bce on (b.city_state_id = bce.city_state_id)
+where bc.p_categorie in ('Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants')
+and bce.state in ('AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN')
+group by b.name order by total desc;

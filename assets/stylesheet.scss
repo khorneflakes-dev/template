@@ -16,6 +16,9 @@ $color-texto2: rgba(0, 0, 0, 0.69);
 .aux{
     display: none;
 }
+.modebar{
+    display: none !important;
+}
 
 .navbar{
     background-color: $color-fondo;
@@ -225,12 +228,12 @@ $color-texto2: rgba(0, 0, 0, 0.69);
     display: flex;
     flex-direction: column;
     width: 91vw;
-    margin-top: 4vh;
+    margin-top: 2vh;
     font-family: $fuente-principal;
     .business-row1{
         display: flex;
         width: 100%;
-        margin-bottom: 2vh;
+        margin-bottom: 0vh;
         .row1-col1{
             width: 100%;
             display: flex;
@@ -240,7 +243,7 @@ $color-texto2: rgba(0, 0, 0, 0.69);
                 display: flex;
                 width: 100%;
                 justify-content: space-between;
-                margin-bottom: 4vh;
+                margin-bottom: 2vh;
                 .filter{
                     width: 9vw;
                     text-align: right;
@@ -353,7 +356,7 @@ $color-texto2: rgba(0, 0, 0, 0.69);
                 text-align: right;
                 font-size: 2.5rem;
                 font-weight: 500;
-                margin-bottom: 4vh;
+                margin-bottom: 2vh;
                 color: $color-texto1;
 
             }
@@ -497,6 +500,171 @@ $color-texto2: rgba(0, 0, 0, 0.69);
     }
 }
 
+.business2-container{
+    padding-left: 5vw;
+    display: flex;
+    flex-direction: column;
+    width: 91vw;
+    margin-top: 2vh;
+    font-family: $fuente-principal;
+    .risk-row1{
+        display: flex;
+        width: 100%;
+        margin-bottom: 2vh;
+        .row1-col1{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            width: 60vw;
+            .row1-col1-row1{ 
+                display: flex;
+                width: 100%;
+                justify-content: space-between;
+                margin-bottom: 2vh;
+                .filter{
+                    width: 9vw;
+                    text-align: right;
+                    font-size: 1.5rem;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-end;
+                    font-weight: 600;
+                    color: $color-texto1;
+                }
+                .dropdown{
+                    width: 10vw;
+                    margin-left: 2vw;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    z-index: 20;
+                    filter: drop-shadow(-5px 5px 28px rgba(72, 72, 72, 0.253));
+                    .Select{
+                        border-radius: 10px;
+                    }
+                    .Select-control{
+                        border: transparent;
+                        .Select-clear-zone{
+                            display: none;
+                        }
+                        .Select-value{
+                            border-radius: 10px;
+                        }
+                    }
+                }
+                .range-slider{
+                    z-index: 20;
+                    width: 29vw;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    margin-left: 1vw;
+                    filter: drop-shadow(-5px 5px 28px rgba(72, 72, 72, 0.253));
+                    .rc-slider{
+                        .rc-slider-rail{
+                            background-color: #B9B9B9;
+                        }
+                        .rc-slider-track{
+                            background-color: #333333;
+                        }
+                        .rc-slider-handle{
+                            background-color: #c4c4c4;
+                            border: 1px solid #c4c4c4;
+                        }
+                        .rc-slider-tooltip-inner{
+                            background-color: #c4c4c4;
+                            border: 1px solid #c4c4c4;
+                        }
+                    }
+                }
+            }
+            .row1-col1-row2{
+                display: flex;
+                width: 100%;
+                .risk-description{
+                    width: 9vw;
+                    padding-right: 1vw;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.2rem;
+                    text-align: right;                    
+                }
+                .experience-container{
+                    display: flex;
+                    width: 40vw;
+                    flex-direction: column;
+                    gap: 2vh;
+                    align-items: center;
+                    position: relative;
+                    .map-title{
+                        text-align: center;
+                        justify-content: center;
+                        align-items: center;
+                        position: absolute;
+                        top: 25px;
+                        font-weight: 600;
+                        z-index: 10;
+                    }
+                    .map-container{
+                        display: flex;
+                        border-radius: 10px;
+                        filter: drop-shadow(-5px 5px 28px rgba(72, 72, 72, 0.253));
+                        background-color: #FFFFFF;
+                        .experience-map{
+                            width: 100%;
+                        }
+                    }
+
+                }
+
+            }
+        }
+        .row1-col2{
+            display: flex;
+            flex-direction: column;
+            width: 40vw;
+            .dashboard-title{
+                display: flex;
+                justify-content: end;
+                align-items: flex-end;
+                text-align: right;
+                font-size: 2.5rem;
+                font-weight: 500;
+                margin-bottom: 2vh;
+                color: $color-texto1;
+
+            }
+            .row1-col2-col2{
+                display: flex;
+                width: 30vw;
+                .risk-table-description{
+                    width: 9vw;
+                    padding-right: 1vw;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 1.2rem;
+                    text-align: right;
+                }
+                .risk-table{
+                    display: flex;
+                    width: 21vw;
+                    .cell-table{
+                        .unfocused, .selectable, .dash-cell-value{
+                            font-family: $fuente-principal;
+                        }
+                        
+                    }
+                
+                }
+            }
+
+        }
+    }
+}
 
 
 

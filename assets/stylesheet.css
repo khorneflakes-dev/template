@@ -11,6 +11,10 @@
   display: none;
 }
 
+.modebar {
+  display: none !important;
+}
+
 .navbar {
   background-color: #F2F2F2;
   display: flex;
@@ -210,13 +214,13 @@
   display: flex;
   flex-direction: column;
   width: 91vw;
-  margin-top: 4vh;
+  margin-top: 2vh;
   font-family: "Roboto", sans-serif;
 }
 .business1-container .business-row1 {
   display: flex;
   width: 100%;
-  margin-bottom: 2vh;
+  margin-bottom: 0vh;
 }
 .business1-container .business-row1 .row1-col1 {
   width: 100%;
@@ -228,7 +232,7 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
-  margin-bottom: 4vh;
+  margin-bottom: 2vh;
 }
 .business1-container .business-row1 .row1-col1 .row1-col1-row1 .filter {
   width: 9vw;
@@ -337,7 +341,7 @@
   text-align: right;
   font-size: 2.5rem;
   font-weight: 500;
-  margin-bottom: 4vh;
+  margin-bottom: 2vh;
   color: #2A2A2A;
 }
 .business1-container .business-row1 .row1-col2 .row1-col2-col2 {
@@ -468,6 +472,162 @@
 .business1-container .business-row2 .row1-col3 .radio-items input:hover + .option {
   font-weight: 900;
   transition: 0.3s;
+}
+
+.business2-container {
+  padding-left: 5vw;
+  display: flex;
+  flex-direction: column;
+  width: 91vw;
+  margin-top: 2vh;
+  font-family: "Roboto", sans-serif;
+}
+.business2-container .risk-row1 {
+  display: flex;
+  width: 100%;
+  margin-bottom: 2vh;
+}
+.business2-container .risk-row1 .row1-col1 {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 60vw;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 2vh;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .filter {
+  width: 9vw;
+  text-align: right;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-weight: 600;
+  color: #2A2A2A;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .dropdown {
+  width: 10vw;
+  margin-left: 2vw;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  z-index: 20;
+  filter: drop-shadow(-5px 5px 28px rgba(72, 72, 72, 0.253));
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .dropdown .Select {
+  border-radius: 10px;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .dropdown .Select-control {
+  border: transparent;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .dropdown .Select-control .Select-clear-zone {
+  display: none;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .dropdown .Select-control .Select-value {
+  border-radius: 10px;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .range-slider {
+  z-index: 20;
+  width: 29vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  border-radius: 10px;
+  margin-left: 1vw;
+  filter: drop-shadow(-5px 5px 28px rgba(72, 72, 72, 0.253));
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .range-slider .rc-slider .rc-slider-rail {
+  background-color: #B9B9B9;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .range-slider .rc-slider .rc-slider-track {
+  background-color: #333333;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .range-slider .rc-slider .rc-slider-handle {
+  background-color: #c4c4c4;
+  border: 1px solid #c4c4c4;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row1 .range-slider .rc-slider .rc-slider-tooltip-inner {
+  background-color: #c4c4c4;
+  border: 1px solid #c4c4c4;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row2 {
+  display: flex;
+  width: 100%;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row2 .risk-description {
+  width: 9vw;
+  padding-right: 1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  text-align: right;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row2 .experience-container {
+  display: flex;
+  width: 40vw;
+  flex-direction: column;
+  gap: 2vh;
+  align-items: center;
+  position: relative;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row2 .experience-container .map-title {
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 25px;
+  font-weight: 600;
+  z-index: 10;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row2 .experience-container .map-container {
+  display: flex;
+  border-radius: 10px;
+  filter: drop-shadow(-5px 5px 28px rgba(72, 72, 72, 0.253));
+  background-color: #FFFFFF;
+}
+.business2-container .risk-row1 .row1-col1 .row1-col1-row2 .experience-container .map-container .experience-map {
+  width: 100%;
+}
+.business2-container .risk-row1 .row1-col2 {
+  display: flex;
+  flex-direction: column;
+  width: 40vw;
+}
+.business2-container .risk-row1 .row1-col2 .dashboard-title {
+  display: flex;
+  justify-content: end;
+  align-items: flex-end;
+  text-align: right;
+  font-size: 2.5rem;
+  font-weight: 500;
+  margin-bottom: 2vh;
+  color: #2A2A2A;
+}
+.business2-container .risk-row1 .row1-col2 .row1-col2-col2 {
+  display: flex;
+  width: 30vw;
+}
+.business2-container .risk-row1 .row1-col2 .row1-col2-col2 .risk-table-description {
+  width: 9vw;
+  padding-right: 1vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  text-align: right;
+}
+.business2-container .risk-row1 .row1-col2 .row1-col2-col2 .risk-table {
+  display: flex;
+  width: 21vw;
+}
+.business2-container .risk-row1 .row1-col2 .row1-col2-col2 .risk-table .cell-table .unfocused, .business2-container .risk-row1 .row1-col2 .row1-col2-col2 .risk-table .cell-table .selectable, .business2-container .risk-row1 .row1-col2 .row1-col2-col2 .risk-table .cell-table .dash-cell-value {
+  font-family: "Roboto", sans-serif;
 }
 
 @media screen and (max-width: 1366px) {

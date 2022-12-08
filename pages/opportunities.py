@@ -9,7 +9,12 @@ from sqlalchemy import create_engine
 dash.register_page(__name__)
 
 layout = html.Div(children=[
-    html.P('demo')
+    
+    html.Div([
+        dcc.Link('Trending', href='/trending'),
+        dcc.Link('Risk', href='/risk'),
+        dcc.Link('Opportunities', href='/opportunities'),
+    ], className='business-menu'),
 
 ], className='container')
 
