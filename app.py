@@ -34,11 +34,11 @@ app.layout = html.Div([
 ])
 
 if __name__ == '__main__':
-	app.run_server(
-                debug=False, # for deployment
+	app.run_server(host='0.0.0.0', port=80)
+                # debug=False, # for deployment
                 # debug=True, # enable reload when file save
                 # threaded=True, # enable dev tools
                 # dev_tools_hot_reload=True, # hot reload, only true for css design
                 # # use_reloader=True, 
-                )
+                # )
 
