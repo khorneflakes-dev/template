@@ -19,9 +19,16 @@ layout = html.Div([
     html.Div(dcc.RadioItems(id='aux', value='', className='aux')),
 
     html.Div([
-        dcc.Link('Trending', href='/trending'),
-        dcc.Link('Risk', href='/risk'),
-        dcc.Link('Opportunities', href='/opportunities'),
+        
+        html.Div([
+            dcc.Link('Trending', href='/trending'),
+        ],className='selected'),
+        html.Div([
+            dcc.Link('Risk', href='/risk'),
+        ]),
+        html.Div([
+            dcc.Link('Opportunities', href='/opportunities'),
+        ])
     ], className='business-menu'),
 
     # business-container 1
@@ -34,13 +41,13 @@ layout = html.Div([
                 
                 dcc.Dropdown(['All categories','Active Life', 'Arts & Entertainment', 'Beauty & Spas' , 'Food', 'Hotels & Travel','Nightlife','Restaurants'], 'Active Life', id='categories', className='dropdown'),
                 
-                dcc.RangeSlider(2005, 2021, 1, value=[2020, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True}, id='year-slider', className='range-slider')
+                dcc.RangeSlider(2005, 2021, 1, value=[2015, 2021], marks=None, tooltip={"placement": "bottom", "always_visible": True}, id='year-slider', className='range-slider')
                 
             ],className='row1-col1-row1'), # filter y slider
             
             html.Div([
                 
-                html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.', className='map-description'),
+                html.P('Generally, businesses located in the states of California and Louisiana stand out from the rest for having a higher satisfaction index, this information is obtained from the respective scores of their reviews', className='map-description'),
                 
                 html.Div([
                     
@@ -63,7 +70,7 @@ layout = html.Div([
             
             html.Div([
                 
-                html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.', className='heatmap-description'),
+                html.P('The recovery of businesses after the pandemic period has been very limited and in some cases there was no recovery. As an example, Illinois presents one of the highest recovery rates', className='heatmap-description'),
                 
                 html.Div([
                     html.P('ANUAL MARKET GROWTH (difference in the number of companies reviewed per year)', className='heatmap-title'),    
@@ -105,7 +112,6 @@ layout = html.Div([
             
             dcc.Graph(id='wordcloud',style={'width': '30vw', 'height': '30vh'}),
             
-            html.P('Lorem ipsum dolor sit amet consectetur. Duis ut accumsan ipsum vitae quis pellentesque iaculis potenti scelerisque. Nulla vitae nec sit rhoncus sed.')
             
         ], className='row1-col3'),
       
@@ -248,6 +254,10 @@ def heatmap_graph(slider, categorie):
                 prev_count = df_bb['count_business'][(mask_state) & (mask_last_year)].iloc[0]
                 df_bb['per_dif'].iloc[i] = round(100* (actual_count - prev_count) / prev_count , 2)
 
+        states_names=pd.DataFrame({'code':['AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN'],
+                        'state':['Arizona', 'California', 'Delaware', 'Florida', 'Idaho', 'Illinois','Indiana','Louisiana','Missouri','New Jersey','Nevada','Pennsylvania','Tennessee']})
+        df_bb.state = df_bb.state.map(lambda x: states_names.state[states_names.code == x].iloc[0]+" ")        
+        
         df = df_bb.pivot(index='state' ,columns='year' , values='per_dif')
         df = df.drop(df.columns[0], axis='columns')        
         fig = px.imshow(df)
@@ -286,7 +296,11 @@ def heatmap_graph(slider, categorie):
             if df_bb[mask_state].year.min() != df_bb.year.iloc[i]:
                 prev_count = df_bb['count_business'][(mask_state) & (mask_last_year)].iloc[0]
                 df_bb['per_dif'].iloc[i] = round(100* (actual_count - prev_count) / prev_count , 2)
-
+                
+        states_names=pd.DataFrame({'code':['AZ', 'CA', 'DE', 'FL', 'ID', 'IL', 'IN', 'LA', 'MO', 'NJ', 'NV', 'PA', 'TN'],
+                        'state':['Arizona', 'California', 'Delaware', 'Florida', 'Idaho', 'Illinois','Indiana','Louisiana','Missouri','New Jersey','Nevada','Pennsylvania','Tennessee']})
+        df_bb.state = df_bb.state.map(lambda x: states_names.state[states_names.code == x].iloc[0]+" ")        
+        
         df = df_bb.pivot(index='state' ,columns='year' , values='per_dif')
         df = df.drop(df.columns[0], axis='columns')
 
