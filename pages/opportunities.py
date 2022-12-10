@@ -210,7 +210,6 @@ def depliegue_mapa(stars, Pcategories, n_clicks, text_area,clk_data):
     #     grafica = data_grafica_todos_estados(df,stars,Pcategories,text_area)
     if clk_data == None:
         filtro_state = None
-        print(filtro_state)
     elif clk_data != None:
         filtro_state = clk_data['points'][0]['location']
         
@@ -241,7 +240,6 @@ def despligue_ciudades(stars, Pcategories, clk_data):
     
     if clk_data == None:
         filtro_state = None
-        print(filtro_state)
     elif clk_data != None:
         filtro_state = clk_data['points'][0]['location']
     

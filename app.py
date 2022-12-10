@@ -6,6 +6,7 @@ import plotly.graph_objects as go
 from sqlalchemy import create_engine
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
+warnings.filterwarnings('ignore')
 
 # SQLAlchemy connectable
 engine = create_engine(
@@ -37,7 +38,7 @@ app.layout = html.Div([
 
 if __name__ == '__main__':
 	app.run_server(
-                debug=True, # for deployment
+                 # for deployment
                 # debug=True, # enable reload when file save
                 # threaded=True, # enable dev tools
                 # dev_tools_hot_reload=True, # hot reload, only true for css design
