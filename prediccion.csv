@@ -1,0 +1,10 @@
+name,address,latitude,longitude,city,state,stars,review_count,Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday
+Acme Oyster House,724 Iberville St,29.9543,-90.069,New Orleans,LA,4.0,7568,11:0-14:0,11:0-14:0,11:0-14:0,11:0-21:0,11:0-21:0,17:0-21:0,0
+Oceana Grill,739 Conti St,29.9562,-90.0676,New Orleans,LA,4.0,7400,9:0-21:0,0,9:0-21:0,9:0-21:0,9:0-19:0,8:0-16:0,0
+Hattie B’s Hot Chicken - Nashville,112 19th Ave S,36.1514,-86.7966,Nashville,TN,4.5,6093,0:0-0:0,16:30-21:30,16:30-21:30,16:30-21:30,16:30-22:30,11:0-22:30,11:30-21:0
+Reading Terminal Market,51 N 12th St,39.9533,-75.1589,Philadelphia,PA,4.5,5721,15:0-3:0,15:0-3:0,15:0-3:0,15:0-3:0,15:0-3:0,15:0-3:0,11:0-3:0
+Ruby Slipper - New Orleans,200 Magazine St,29.951,-90.0674,New Orleans,LA,4.5,5193,0:0-0:0,0,0,12:0-18:0,12:0-15:0,12:0-18:0,12:0-16:0
+Mother's Restaurant,401 Poydras St,29.9491,-90.067,New Orleans,LA,3.5,5185,7:0-20:0,7:0-20:0,7:0-20:0,7:0-20:0,7:0-22:0,8:30-22:0,0
+Royal House,441 Royal St,29.9565,-90.0664,New Orleans,LA,4.0,5070,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0
+Commander's Palace,1403 Washington Ave,29.9287,-90.0842,New Orleans,LA,4.5,4876,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0,0:0-0:0
+Luke,333 Saint Charles Ave,29.9507,-90.0704,New Orleans,LA,4.0,4554,0,0,0,0,0,0,0
