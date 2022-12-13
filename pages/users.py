@@ -57,9 +57,8 @@ layout = html.Div([
         
         html.Div([
             html.Div([
-                # dcc.Input(id='enter-id', className='enter-id', placeholder='enter user id'),
-                # html.Button('recommend me', id='login', n_clicks=0, className='login'),
-                dcc.Dropdown([672291, 762612, 1241051, 1870361, 1172061, 688050, 1077256, 351604, 662185, 1793565], id='user-dropdown')
+                dcc.Input(id='enter-id', className='enter-id', placeholder='enter user id'),
+                html.Button('recommend me', id='login', n_clicks=0, className='login'),
             ], className='login-container'),
             
             html.Div(id='iframe'
@@ -77,12 +76,11 @@ layout = html.Div([
 # funcion para validar el id_user
 @callback(
     Output('welcome', 'children'),
-    # Input('login', 'n_clicks'),
-    # State('enter-id', 'value'),
-    Input('user-dropdown', 'value')
+    Input('login', 'n_clicks'),
+    State('enter-id', 'value')
 )
-def update_output(value):
-    if value != None:
+def update_output(n_clicks, value):
+    if n_clicks > 0 and value != None:
         name = engine.connect().execute(f'select name from user_names where id_user = {value};').fetchall()[0][0]
         return f'Welcome, {name}'
     else:
@@ -93,9 +91,10 @@ recomendacion_final = ''
 # funcion para crear las cards de los restaurantes recomendados
 @callback(
     Output('cards', 'children'),
-    Input('user-dropdown', 'value')
+    Input('login', 'n_clicks'),
+    State('enter-id', 'value')    
 )
-def card(value):
+def card(n_clicks, value):
 
     def hour_format(value):
         from datetime import datetime
@@ -113,9 +112,10 @@ def card(value):
     
     global recomendacion_final
     
-    if value == None:
+    if n_clicks == 0 and value == None:
         # global recomendacion
-        recomendacion = pd.read_csv('./prediccion.csv')
+        recomendacion = pd.read_sql('select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id order by b.review_count desc limit 9;',
+                                    con=engine)
         
         for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
             recomendacion[i] = recomendacion[i].apply(lambda x: hour_format(x))
@@ -134,8 +134,8 @@ def card(value):
             return lista[:5]
 
         recomendacion['estrellas'] = recomendacion['stars'].apply(lambda x: stars(x))
+     
         
-        recomendacion_final = recomendacion
         demoval2 = html.Div([
 
             html.Div([
@@ -186,11 +186,26 @@ def card(value):
         recomendacion_final.to_csv('./recomendacion_final.csv', index=False)
         return demoval2
     
-    elif value != None:
+    elif n_clicks != 0 and value != None:
         
-        df_predicciones = pd.read_csv('./predicciones.csv')
+        id_user = value
         
-        recomendacion = df_predicciones[df_predicciones.id_user == value]
+        main_cat = pd.read_parquet('main_cat.parquet.gzip')
+        user_review = pd.read_sql(
+            f"select id_business, stars from reviews where id_user = {id_user};",
+            con=engine, index_col='id_business')
+        user_preferences = pd.merge(user_review, main_cat, left_index=True, right_index=True)
+        user_stars = user_preferences['stars'].copy()
+        user_preferences.drop(columns='stars', inplace=True)
+        user_stars.shape, user_preferences.transpose().shape
+        user_perfil = user_preferences.transpose().dot(user_stars)
+        recomendacion = (main_cat * user_perfil).sum(axis=1)/(user_perfil.sum())
+        recomendacion = recomendacion.sort_values(ascending=False)
+
+        tupla_consulta = tuple(recomendacion.keys()[:30])
+        
+        recomendacion = pd.read_sql(f"select b.name, b.address, b.latitude, b.longitude, cs.city, cs.state, b.stars, b.review_count, h.Monday, h.Tuesday, h.Wednesday, h.Thursday, h.Friday, h.Saturday, h.Sunday from business b left join business_city_state cs on b.city_state_id = cs.city_state_id left join business_hours h on b.hours_id = h.hours_id where b.business_id in {tupla_consulta} order by b.review_count desc limit 9;",
+                                    con=engine)
         
         for i in ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']:
             recomendacion[i] = recomendacion[i].apply(lambda x: hour_format(x))
@@ -207,8 +222,7 @@ def card(value):
             return lista[:5]
 
         recomendacion['estrellas'] = recomendacion['stars'].apply(lambda x: stars(x))
-        recomendacion.drop('id_user', axis=1, inplace=True)
-        recomendacion_final = recomendacion
+    
         demoval = html.Div([
 
             html.Div([
@@ -279,8 +293,8 @@ def displayBack(btn1,btn2,btn3,btn4,btn5,btn6,btn7,btn8,btn9):
     latitude = ''
     longitude = ''
     if "btn-nclicks-0" == ctx.triggered_id:
-        latitude = recomendacion_final['latitude'][1]
-        longitude = recomendacion_final['longitude'][1]
+        latitude = recomendacion_final['latitude'][0]
+        longitude = recomendacion_final['longitude'][0]
     elif "btn-nclicks-1" == ctx.triggered_id:
         latitude = recomendacion_final['latitude'][1]
         longitude = recomendacion_final['longitude'][1]
